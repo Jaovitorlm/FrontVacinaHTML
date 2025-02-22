@@ -5,6 +5,8 @@ const BASE_URL = 'http://localhost:8080';
 export const apiBase = {
     // [GET] Busca todos os valores
     async listar(endpoint) {
+   
+      
         try {
             const response = await fetch(`${BASE_URL}/${endpoint}`);
             if (!response.ok) {
@@ -20,6 +22,7 @@ export const apiBase = {
     // GET by id
     async buscarPorId(endpoint, id) {
         try {
+   
             const response = await fetch(`${BASE_URL}/${endpoint}/${id}`);
             if (!response.ok) {
                 throw new Error(`Erro ao buscar ${endpoint}: ${response.statusText}`);
@@ -73,6 +76,7 @@ export const apiBase = {
             const response = await fetch(`${BASE_URL}/${endpoint}/${id}`, {
                 method: 'DELETE'
             });
+            console.log(response);
             if (!response.ok) {
                 throw new Error(`Erro ao excluir ${endpoint}: ${response.statusText}`);
             }

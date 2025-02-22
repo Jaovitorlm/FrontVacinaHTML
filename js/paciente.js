@@ -40,8 +40,9 @@ export const pacienteModule = {
     },
 
     async atualizarPaciente(event) {
+        debugger;
         event.preventDefault();
-        const id = document.getElementById('id').value;
+        const id = utils.obterParametroUrl('id');
         try {
             const dados = utils.getFormData(event.target);
             await apiBase.atualizar(ENDPOINT, id, dados);
@@ -53,8 +54,9 @@ export const pacienteModule = {
 
     async excluirPaciente(id) {
         if (!confirm('Deseja realmente excluir este paciente?')) return;
-        
+
         try {
+            debugger;
             await apiBase.excluir(ENDPOINT, id);
             utils.mostrarMensagem('Sucesso', 'Paciente excluído com sucesso!');
             await this.carregarPacientes();
@@ -72,18 +74,23 @@ export const pacienteModule = {
                 <td>${paciente.cpf}</td>
                 <td>${paciente.sexo}</td>
                 <td>${paciente.data_nascimento}</td>
-                <td>${paciente.responsavel}</td>
+                <td>${paciente.nomeResponsavel !== undefined ? paciente.nomeResponsavel : ''}</td>
                 <td>
-                    <a href="/cadastro/editar/paciente.html?id=${paciente.id}">
-                        <button class="w3-button w3-green w3-round">Editar</button>
-                    </a>
-                    <button class="w3-button w3-red w3-round" 
-                            onclick=this.excluirAluno('${paciente.id}')>
-                        Excluir
+                <a href="/editar/paciente.html?id=${paciente.id}">
+                    <button class="btn btn-warning "><i class="fa-solid fa-user-pen text-white"></i></button>
+                </a>
+                <button class="btn btn-danger btn-excluir" onclick="pacienteModule.excluirPaciente(${paciente.id})">
+                        <i class="fa-solid fa-user-xmark"></i>
                     </button>
+                     <a href="imunizacoespaciente.html?idPaciente=${paciente.id}">
+                    <button class="btn btn-info "><i class="fa-solid fa-syringe"></i></button>
+                </a>
+                  
                 </td>
             </tr>
         `).join('');
+       
+       
     },
 
     preencherFormulario(paciente) {
@@ -97,6 +104,7 @@ export const pacienteModule = {
 // Inicialização
 document.addEventListener('DOMContentLoaded', () => {
     // Verifica se está na página de listagem
+  
     if (document.getElementById('dadosPaciente')) {
         pacienteModule.carregarPacientes();
     }
@@ -109,8 +117,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Configura o formulário
     const form = document.querySelector('form');
     if (form) {
-        alert("form");
+ 
         form.addEventListener('submit', (e) => {
+            debugger;
             if (utils.obterParametroUrl('id')) {
                 pacienteModule.atualizarPaciente(e);
             } else {
@@ -119,3 +128,5 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+window.pacienteModule = pacienteModule;
