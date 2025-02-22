@@ -16,10 +16,27 @@ export const pacienteModule = {
     async cadastrarPaciente(event) {
         event.preventDefault();
         try {
-            debugger;
+          
             const dados = utils.getFormData(event.target);
             await apiBase.cadastrar(ENDPOINT, dados);
             utils.mostrarMensagem('Sucesso', 'Paciente cadastrado com sucesso!');
+            event.target.reset();
+            await this.carregarPacientes();
+        } catch (error) {
+            utils.mostrarMensagem('Erro', error.message);
+        }
+    },
+
+    async cadastrarDependente(event) {
+        debugger;
+        event.preventDefault();
+        const idDependente = utils.obterParametroUrl('idDependente');
+        if (!idDependente) return;
+        try {
+            
+            dados = utils.getFormData(event.target);
+            await apiBase.cadastrar(ENDPOINT, dados);
+            utils.mostrarMensagem('Sucesso', 'Dependente cadastrado com sucesso!');
             event.target.reset();
             await this.carregarPacientes();
         } catch (error) {
@@ -77,15 +94,19 @@ export const pacienteModule = {
                 <td>${paciente.nomeResponsavel !== undefined ? paciente.nomeResponsavel : ''}</td>
                 <td>
                 <a href="/editar/paciente.html?id=${paciente.id}">
-                    <button class="btn btn-warning "><i class="fa-solid fa-user-pen text-white"></i></button>
+                    <button class="btn btn-warning" data-toggle="tooltip" data-placement="top" title="Alterar Paciente">
+                    <i class="fa-solid fa-user-pen text-white"></i></button>
                 </a>
-                <button class="btn btn-danger btn-excluir" onclick="pacienteModule.excluirPaciente(${paciente.id})">
+                <a href="/cadastro/dependente.html?idDependente=${paciente.id}">
+                    <button class="btn btn-success" data-toggle="tooltip" data-placement="top"  title="Cadastrar Dependente" >
+                    <i class="fa-solid fa-users"></i></i></button>
+                </a>
+                <a href="imunizacoespaciente.html?idPaciente=${paciente.id}">
+                    <button class="btn btn-info" data-toggle="tooltip" data-placement="top" title="Imunizações Paciente"><i class="fa-solid fa-syringe"></i></button>
+                </a>
+                <button class="btn btn-danger btn-excluir" data-toggle="tooltip" data-placement="top" title="Excluir Paciente" 
+                    onclick="pacienteModule.excluirPaciente(${paciente.id})">
                         <i class="fa-solid fa-user-xmark"></i>
-                    </button>
-                     <a href="imunizacoespaciente.html?idPaciente=${paciente.id}">
-                    <button class="btn btn-info "><i class="fa-solid fa-syringe"></i></button>
-                </a>
-                  
                 </td>
             </tr>
         `).join('');
@@ -119,9 +140,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (form) {
  
         form.addEventListener('submit', (e) => {
-            debugger;
+
             if (utils.obterParametroUrl('id')) {
                 pacienteModule.atualizarPaciente(e);
+            } else if((utils.obterParametroUrl('idDependente'))){
+                pacienteModule.cadastrarDependente(e);
             } else {
                 pacienteModule.cadastrarPaciente(e);
             }

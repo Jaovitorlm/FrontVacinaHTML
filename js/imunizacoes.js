@@ -20,7 +20,7 @@ export const imunizacoesModule = {
 
         try {
 
-            const ENDPOINTPACIENTE = `imunizacoes/paciente/${idPaciente}`
+            const ENDPOINTPACIENTE = `${ENDPOINT}/paciente/${idPaciente}`
             console.log(ENDPOINTPACIENTE);
             const imunizacoesPaciente = await apiBase.listar(ENDPOINTPACIENTE);
             this.renderizarTabelaPaciente(imunizacoesPaciente);
@@ -123,7 +123,7 @@ export const imunizacoesModule = {
                 <td>${imunizacao.nome}</td>
                 <td>${imunizacao.dose}</td>
                 <td>${imunizacao.dataAplicacao}</td>
-                <td>${imunizacao.dataFabricante}</td>
+                <td>${imunizacao.fabricante}</td>
                 <td>${imunizacao.lote}</td>
                 <td>${imunizacao.localAplicacao}</td>
                 <td>${imunizacao.profissionalAplicador}</td>
