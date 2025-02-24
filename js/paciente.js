@@ -16,11 +16,11 @@ export const pacienteModule = {
     async cadastrarPaciente(event) {
         event.preventDefault();
         try {
-          
             const dados = utils.getFormData(event.target);
+
             await apiBase.cadastrar(ENDPOINT, dados);
             utils.mostrarMensagem('Sucesso', 'Paciente cadastrado com sucesso!');
-            event.target.reset();
+         //   event.target.reset();
             await this.carregarPacientes();
         } catch (error) {
             utils.mostrarMensagem('Erro', error.message);
@@ -28,17 +28,17 @@ export const pacienteModule = {
     },
 
     async cadastrarDependente(event) {
-        debugger;
+
         event.preventDefault();
-        const idDependente = utils.obterParametroUrl('idDependente');
-        if (!idDependente) return;
+        const idResponsavel = utils.obterParametroUrl('idResponsavel');
+        if (!idResponsavel) return;
         try {
-            
-            dados = utils.getFormData(event.target);
+
+            const dados = utils.getFormData(event.target);
+            dados.responsavel = idResponsavel;
             await apiBase.cadastrar(ENDPOINT, dados);
             utils.mostrarMensagem('Sucesso', 'Dependente cadastrado com sucesso!');
             event.target.reset();
-            await this.carregarPacientes();
         } catch (error) {
             utils.mostrarMensagem('Erro', error.message);
         }
@@ -57,7 +57,7 @@ export const pacienteModule = {
     },
 
     async atualizarPaciente(event) {
-        debugger;
+
         event.preventDefault();
         const id = utils.obterParametroUrl('id');
         try {
@@ -73,7 +73,7 @@ export const pacienteModule = {
         if (!confirm('Deseja realmente excluir este paciente?')) return;
 
         try {
-            debugger;
+
             await apiBase.excluir(ENDPOINT, id);
             utils.mostrarMensagem('Sucesso', 'Paciente excluído com sucesso!');
             await this.carregarPacientes();
@@ -81,6 +81,48 @@ export const pacienteModule = {
             utils.mostrarMensagem('Erro', error.message);
         }
     },
+
+    async popularSelectPaciente() {
+    
+        try {
+            const pacientes = await apiBase.listar(ENDPOINT);
+         
+            const selecionar = document.getElementById('pacienteSelect');
+            console.log(selecionar);
+            selecionar.innerHTML = '<option value="">Selecione um paciente</option>';
+           
+            pacientes.forEach(paciente => {
+                const option = document.createElement("option");
+                option.value = paciente.id; 
+                option.textContent = paciente.nome; 
+                selecionar.appendChild(option);
+            });
+        } catch (error) {
+            console.error("Erro ao buscar pacientes:", error);
+        }
+    },
+
+    async popularSelectDose() {
+    
+        try {
+            const ENDPOINTVACINA = "vacinas/idademaior/-1";
+            const vacinas = await apiBase.listar(ENDPOINTVACINA);
+         
+            const selecionar = document.getElementById('doseSelect');
+            console.log(selecionar);
+            selecionar.innerHTML = '<option value="">Selecione uma vacina</option>';
+           
+            vacinas.forEach(vacina => {
+                const option = document.createElement("option");
+                option.value = vacina.dose.id; 
+                option.textContent = vacina.dose.dose + ' - ' + vacina.vacina; 
+                selecionar.appendChild(option);
+            });
+        } catch (error) {
+            console.error("Erro ao buscar pacientes:", error);
+        }
+    },
+
 
     renderizarTabela(paciente) {
         const tbody = document.getElementById('dadosPaciente');
@@ -97,10 +139,12 @@ export const pacienteModule = {
                     <button class="btn btn-warning" data-toggle="tooltip" data-placement="top" title="Alterar Paciente">
                     <i class="fa-solid fa-user-pen text-white"></i></button>
                 </a>
+                ${paciente.nomeResponsavel == null ? `
                 <a href="/cadastro/dependente.html?idDependente=${paciente.id}">
                     <button class="btn btn-success" data-toggle="tooltip" data-placement="top"  title="Cadastrar Dependente" >
                     <i class="fa-solid fa-users"></i></i></button>
                 </a>
+                 ` : ''}
                 <a href="imunizacoespaciente.html?idPaciente=${paciente.id}">
                     <button class="btn btn-info" data-toggle="tooltip" data-placement="top" title="Imunizações Paciente"><i class="fa-solid fa-syringe"></i></button>
                 </a>
@@ -110,8 +154,8 @@ export const pacienteModule = {
                 </td>
             </tr>
         `).join('');
-       
-       
+
+
     },
 
     preencherFormulario(paciente) {
@@ -123,9 +167,18 @@ export const pacienteModule = {
 };
 
 // Inicialização
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     // Verifica se está na página de listagem
-  
+
+    if (document.getElementById('pacienteSelect')) {
+        pacienteModule.popularSelectPaciente();
+    }
+
+    if (document.getElementById('doseSelect')) {
+        pacienteModule.popularSelectDose();
+    }
+
+
     if (document.getElementById('dadosPaciente')) {
         pacienteModule.carregarPacientes();
     }
@@ -137,13 +190,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Configura o formulário
     const form = document.querySelector('form');
-    if (form) {
- 
+    
+    if (form && form.id == 'paciente') {
+
         form.addEventListener('submit', (e) => {
 
             if (utils.obterParametroUrl('id')) {
                 pacienteModule.atualizarPaciente(e);
-            } else if((utils.obterParametroUrl('idDependente'))){
+            } else if (utils.obterParametroUrl('idResponsavel')) {
                 pacienteModule.cadastrarDependente(e);
             } else {
                 pacienteModule.cadastrarPaciente(e);

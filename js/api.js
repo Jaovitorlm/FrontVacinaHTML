@@ -1,5 +1,5 @@
 // api-base.js
-const BASE_URL = 'http://localhost:8080';
+const BASE_URL = 'http://185.111.156.141:8090';
 
 // Funções base para API
 export const apiBase = {
@@ -76,7 +76,7 @@ export const apiBase = {
             const response = await fetch(`${BASE_URL}/${endpoint}/${id}`, {
                 method: 'DELETE'
             });
-            console.log(response);
+            
             if (!response.ok) {
                 throw new Error(`Erro ao excluir ${endpoint}: ${response.statusText}`);
             }

@@ -33,6 +33,7 @@ export const imunizacoesModule = {
 
 
     async cadastrarImunizacoes(event) {
+        debugger;
         event.preventDefault();
         try {
 
@@ -40,7 +41,7 @@ export const imunizacoesModule = {
             await apiBase.cadastrar(ENDPOINT, dados);
             utils.mostrarMensagem('Sucesso', 'Imunizacoes cadastrado com sucesso!');
             event.target.reset();
-            await this.carregarImunizacoes();
+           // await this.carregarImunizacoes();
         } catch (error) {
             utils.mostrarMensagem('Erro', error.message);
         }
@@ -92,16 +93,15 @@ export const imunizacoesModule = {
                 <td>${imunizacao.nome}</td>
                 <td>${imunizacao.dose}</td>
                 <td>${imunizacao.dataAplicacao}</td>
-                <td>${imunizacao.dataFabricante}</td>
+                <td>${imunizacao.fabricante}</td>
                 <td>${imunizacao.lote}</td>
                 <td>${imunizacao.localAplicacao}</td>
                 <td>${imunizacao.profissionalAplicador}</td>
                 <td>
-                    
-                    <button class="btn btn-danger btn-excluir" data-toggle="tooltip" data-placement="top" title="Excluir Imunização"
-                           data-id="${imunizacao.id} >
+                       <button class="btn btn-danger" onclick="imunizacoesModule.excluirImunizacoes(${imunizacao.id})">
                        <i class="fa-solid fa-virus-slash"></i>
                     </button>
+                    
                 </td>
             </tr>
         `).join('');
@@ -128,21 +128,14 @@ export const imunizacoesModule = {
                 <td>${imunizacao.localAplicacao}</td>
                 <td>${imunizacao.profissionalAplicador}</td>
                 <td>
-                    
-                    <button class="btn btn-danger" 
-                           data-id="${imunizacao.id}">
+                  
+                    <button class="btn btn-danger" onclick="imunizacoesModule.excluirImunizacoes(${imunizacao.id})">
                        <i class="fa-solid fa-virus-slash"></i>
                     </button>
                 </td>
             </tr>
         `).join('');
 
-        tbody.querySelectorAll('.btn-excluir').forEach(button => {
-            button.addEventListener('click', () => {
-                const id = button.getAttribute('data-id');
-                imunizacoesModule.excluirImunizacoes(id);
-            });
-        });
     },
 
     preencherFormulario(imunizacoes) {
@@ -175,8 +168,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Configura o formulário
     const form = document.querySelector('form');
-    if (form) {
-        alert("form");
+    if (form && form.id == 'imunizacoes') {
+        
         form.addEventListener('submit', (e) => {
             if (utils.obterParametroUrl('id')) {
                 imunizacoesModule.atualizarImunizacoes(e);
@@ -187,4 +180,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-window.imunizacoesModule = imunizacoesModule;
+window.imunizacoesModule = imunizacoesModule; 
