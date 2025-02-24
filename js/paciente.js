@@ -140,7 +140,7 @@ export const pacienteModule = {
                     <i class="fa-solid fa-user-pen text-white"></i></button>
                 </a>
                 ${paciente.nomeResponsavel == null ? `
-                <a href="/cadastro/dependente.html?idDependente=${paciente.id}">
+                <a href="/cadastro/dependente.html?idResponsavel=${paciente.id}">
                     <button class="btn btn-success" data-toggle="tooltip" data-placement="top"  title="Cadastrar Dependente" >
                     <i class="fa-solid fa-users"></i></i></button>
                 </a>
